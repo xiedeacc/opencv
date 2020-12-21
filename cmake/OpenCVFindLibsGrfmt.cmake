@@ -194,7 +194,7 @@ if(WITH_JASPER AND NOT HAVE_OPENJPEG)
   else()
     include(FindJasper)
   endif()
-
+  message(${JASPER_FOUND})
   if(NOT JASPER_FOUND)
     ocv_clear_vars(JASPER_LIBRARY JASPER_LIBRARIES JASPER_INCLUDE_DIR)
 

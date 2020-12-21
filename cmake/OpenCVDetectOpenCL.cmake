@@ -80,7 +80,7 @@ if(OPENCL_FOUND)
   endif()
 
   # check WITH_OPENCL_D3D11_NV is located in OpenCVDetectDirectX.cmake file
-
+  link_libraries(clFFT)
   if(WITH_VA_INTEL AND HAVE_VA)
     if(HAVE_OPENCL AND EXISTS "${OPENCL_INCLUDE_DIR}/CL/cl_va_api_media_sharing_intel.h")
       set(HAVE_VA_INTEL ON)

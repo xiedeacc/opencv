@@ -39,13 +39,13 @@ macro(ocv_lapack_check)
       list(APPEND _lapack_content "extern \"C\" {")
     endif()
     if(NOT OPENCV_SKIP_LAPACK_MSVC_FIX)
-      list(APPEND _lapack_content "
-#ifdef _MSC_VER
-#include <complex.h>
-#define lapack_complex_float _Fcomplex
-#define lapack_complex_double _Dcomplex
-#endif
-")
+        list(APPEND _lapack_content "
+        #ifdef _MSC_VER
+        #include <complex.h>
+        #define lapack_complex_float _Fcomplex
+        #define lapack_complex_double _Dcomplex
+        #endif
+        ")
     endif()
     list(APPEND _lapack_content "#include \"${OPENCV_CBLAS_H_PATH_${_lapack_impl}}\"")
     if(NOT "${OPENCV_CBLAS_H_PATH_${_lapack_impl}}" STREQUAL "${OPENCV_LAPACKE_H_PATH_${_lapack_impl}}")
@@ -57,7 +57,8 @@ macro(ocv_lapack_check)
 
     string(REPLACE ";" "\n" _lapack_content "${_lapack_content}")
     ocv_update_file("${CBLAS_H_PROXY_PATH}" "${_lapack_content}")
-
+    set(LAPACK_LINK_LIBRARIES /opt/intel/oneapi/mkl/latest/lib/intel64)
+    message("LAPACK_INCLUDE_DIR=${LAPACK_INCLUDE_DIR}, LAPACK_LINK_LIBRARIES=${LAPACK_LINK_LIBRARIES}, LAPACK_LIBRARIES=${LAPACK_LIBRARIES}")
     try_compile(__VALID_LAPACK
         "${OpenCV_BINARY_DIR}"
         "${OpenCV_SOURCE_DIR}/cmake/checks/lapack_check.cpp"

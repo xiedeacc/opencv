@@ -215,7 +215,9 @@ endif()
 if(VIDEOIO_ENABLE_STRICT_PLUGIN_CHECK)
   ocv_target_compile_definitions(${the_module} PRIVATE STRICT_PLUGIN_CHECK)
 endif()
-
+include_directories(/usr/include/mfx)
+link_directories(/usr/lib/x86_64-linux-gnu/mfx)
+link_libraries(mfx_h264la_hw64 mfx_hevcd_hw64 mfx_hevce_hw64 mfx_hevc_fei_hw64 mfx_vp8d_hw64 mfx_vp9d_hw64 mfx_vp9e_hw64 mfx)
 ocv_target_link_libraries(${the_module} LINK_PRIVATE ${tgts})
 
 # copy FFmpeg dll to the output folder

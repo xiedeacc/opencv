@@ -203,6 +203,16 @@ if(MINGW)
   endif()
 endif()
 
+list(APPEND CMAKE_INCLUDE_PATH /usr/include/x86_64-linux-gnu)
+list(APPEND CMAKE_INCLUDE_PATH /usr/include/mfx)
+list(APPEND CMAKE_INCLUDE_PATH /usr/local/include/)
+list(APPEND CMAKE_INCLUDE_PATH /usr/local/include/jasper)
+list(APPEND CMAKE_LIBRARY_PATH /usr/lib)
+list(APPEND CMAKE_LIBRARY_PATH /usr/lib/x86_64-linux-gnu)
+list(APPEND CMAKE_LIBRARY_PATH /usr/local/lib)
+list(APPEND CMAKE_LIBRARY_PATH /usr/local/lib/x86_64-linux-gnu)
+list(APPEND CMAKE_LIBRARY_PATH /usr/lib64)
+list(APPEND CMAKE_LIBRARY_PATH /usr/local/lib64)
 # ----------------------------------------------------------------------------
 # OpenCV cmake options
 # ----------------------------------------------------------------------------

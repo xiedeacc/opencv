@@ -45,42 +45,42 @@ OCV_OPTION(MKL_WITH_TBB "Use MKL with TBB multithreading" OFF)#ON IF WITH_TBB)
 OCV_OPTION(MKL_WITH_OPENMP "Use MKL with OpenMP multithreading" OFF)#ON IF WITH_OPENMP)
 
 if(NOT MKL_ROOT_DIR AND DEFINED MKL_INCLUDE_DIR AND EXISTS "${MKL_INCLUDE_DIR}/mkl.h")
-  file(TO_CMAKE_PATH "${MKL_INCLUDE_DIR}" MKL_INCLUDE_DIR)
-  get_filename_component(MKL_ROOT_DIR "${MKL_INCLUDE_DIR}/.." ABSOLUTE)
+    file(TO_CMAKE_PATH "${MKL_INCLUDE_DIR}" MKL_INCLUDE_DIR)
+    get_filename_component(MKL_ROOT_DIR "${MKL_INCLUDE_DIR}/.." ABSOLUTE)
 endif()
 if(NOT MKL_ROOT_DIR)
-  file(TO_CMAKE_PATH "${MKL_ROOT_DIR}" mkl_root_paths)
-  if(DEFINED ENV{MKLROOT})
-      file(TO_CMAKE_PATH "$ENV{MKLROOT}" path)
-      list(APPEND mkl_root_paths "${path}")
-  endif()
-
-  if(WITH_MKL AND NOT mkl_root_paths)
-    if(WIN32)
-      set(ProgramFilesx86 "ProgramFiles(x86)")
-      file(TO_CMAKE_PATH "$ENV{${ProgramFilesx86}}" path)
-      list(APPEND mkl_root_paths ${path}/IntelSWTools/compilers_and_libraries/windows/mkl)
+    file(TO_CMAKE_PATH "${MKL_ROOT_DIR}" mkl_root_paths)
+    if(DEFINED ENV{MKLROOT})
+        file(TO_CMAKE_PATH "$ENV{MKLROOT}" path)
+        list(APPEND mkl_root_paths "${path}")
     endif()
-    if(UNIX)
-      list(APPEND mkl_root_paths "/opt/intel/mkl")
-    endif()
-  endif()
 
-  find_path(MKL_ROOT_DIR include/mkl.h PATHS ${mkl_root_paths})
+    if(WITH_MKL AND NOT mkl_root_paths)
+        if(WIN32)
+            set(ProgramFilesx86 "ProgramFiles(x86)")
+            file(TO_CMAKE_PATH "$ENV{${ProgramFilesx86}}" path)
+            list(APPEND mkl_root_paths ${path}/IntelSWTools/compilers_and_libraries/windows/mkl)
+        endif()
+        if(UNIX)
+            list(APPEND mkl_root_paths "/opt/intel/mkl")
+        endif()
+    endif()
+
+    find_path(MKL_ROOT_DIR include/mkl.h PATHS ${mkl_root_paths})
 endif()
 
 if(NOT MKL_ROOT_DIR OR NOT EXISTS "${MKL_ROOT_DIR}/include/mkl.h")
-  mkl_fail()
+    mkl_fail()
 endif()
 
 set(MKL_INCLUDE_DIR "${MKL_ROOT_DIR}/include" CACHE PATH "Path to MKL include directory")
 
 if(NOT MKL_ROOT_DIR
-    OR NOT EXISTS "${MKL_ROOT_DIR}"
-    OR NOT EXISTS "${MKL_INCLUDE_DIR}"
-    OR NOT EXISTS "${MKL_INCLUDE_DIR}/mkl_version.h"
-)
-  mkl_fail()
+        OR NOT EXISTS "${MKL_ROOT_DIR}"
+        OR NOT EXISTS "${MKL_INCLUDE_DIR}"
+        OR NOT EXISTS "${MKL_INCLUDE_DIR}/mkl_version.h"
+        )
+    mkl_fail()
 endif()
 
 get_mkl_version(${MKL_INCLUDE_DIR}/mkl_version.h)
@@ -105,56 +105,56 @@ endif()
 
 set(mkl_lib_find_paths ${MKL_LIB_FIND_PATHS} ${MKL_ROOT_DIR}/lib)
 foreach(MKL_ARCH ${MKL_ARCH_LIST})
-  list(APPEND mkl_lib_find_paths
-    ${MKL_ROOT_DIR}/lib/${MKL_ARCH}
-    ${MKL_ROOT_DIR}/${MKL_ARCH}
-  )
+    list(APPEND mkl_lib_find_paths
+        ${MKL_ROOT_DIR}/lib/${MKL_ARCH}
+        ${MKL_ROOT_DIR}/${MKL_ARCH}
+        )
 endforeach()
 
 if(MKL_USE_SINGLE_DYNAMIC_LIBRARY AND NOT (MKL_VERSION_STR VERSION_LESS "10.3.0"))
 
-  # https://software.intel.com/content/www/us/en/develop/articles/a-new-linking-model-single-dynamic-library-mkl_rt-since-intel-mkl-103.html
-  set(mkl_lib_list "mkl_rt")
+    # https://software.intel.com/content/www/us/en/develop/articles/a-new-linking-model-single-dynamic-library-mkl_rt-since-intel-mkl-103.html
+    set(mkl_lib_list "mkl_rt")
 
 elseif(NOT (MKL_VERSION_STR VERSION_LESS "11.3.0"))
 
-  foreach(MKL_ARCH ${MKL_ARCH_LIST})
-    list(APPEND mkl_lib_find_paths
-      ${MKL_ROOT_DIR}/../tbb/lib/${MKL_ARCH}
-    )
-  endforeach()
+    foreach(MKL_ARCH ${MKL_ARCH_LIST})
+        list(APPEND mkl_lib_find_paths
+            ${MKL_ROOT_DIR}/../tbb/lib/${MKL_ARCH}
+            )
+    endforeach()
 
-  set(mkl_lib_list "mkl_intel_${MKL_ARCH_SUFFIX}")
+    set(mkl_lib_list "mkl_intel_${MKL_ARCH_SUFFIX}")
 
-  if(MKL_WITH_TBB)
-    list(APPEND mkl_lib_list mkl_tbb_thread tbb)
-  elseif(MKL_WITH_OPENMP)
-    if(MSVC)
-      list(APPEND mkl_lib_list mkl_intel_thread libiomp5md)
+    if(MKL_WITH_TBB)
+        list(APPEND mkl_lib_list mkl_tbb_thread tbb)
+    elseif(MKL_WITH_OPENMP)
+        if(MSVC)
+            list(APPEND mkl_lib_list mkl_intel_thread libiomp5md)
+        else()
+            list(APPEND mkl_lib_list mkl_gnu_thread)
+        endif()
     else()
-      list(APPEND mkl_lib_list mkl_gnu_thread)
+        list(APPEND mkl_lib_list mkl_sequential)
     endif()
-  else()
-    list(APPEND mkl_lib_list mkl_sequential)
-  endif()
 
-  list(APPEND mkl_lib_list mkl_core)
+    list(APPEND mkl_lib_list mkl_core)
 else()
-  message(STATUS "MKL version ${MKL_VERSION_STR} is not supported")
-  mkl_fail()
+    message(STATUS "MKL version ${MKL_VERSION_STR} is not supported")
+    mkl_fail()
 endif()
 
 if(NOT MKL_LIBRARIES)
-  set(MKL_LIBRARIES "")
-  foreach(lib ${mkl_lib_list})
-    set(lib_var_name MKL_LIBRARY_${lib})
-    find_library(${lib_var_name} NAMES ${lib} ${lib}_dll HINTS ${mkl_lib_find_paths})
-    mark_as_advanced(${lib_var_name})
-    if(NOT ${lib_var_name})
-      mkl_fail()
-    endif()
-    list(APPEND MKL_LIBRARIES ${${lib_var_name}})
-  endforeach()
+    set(MKL_LIBRARIES "")
+    foreach(lib ${mkl_lib_list})
+        set(lib_var_name MKL_LIBRARY_${lib})
+        find_library(${lib_var_name} NAMES ${lib} ${lib}_dll HINTS ${mkl_lib_find_paths})
+        mark_as_advanced(${lib_var_name})
+        if(NOT ${lib_var_name})
+            mkl_fail()
+        endif()
+        list(APPEND MKL_LIBRARIES ${${lib_var_name}})
+    endforeach()
 endif()
 
 message(STATUS "Found MKL ${MKL_VERSION_STR} at: ${MKL_ROOT_DIR}")

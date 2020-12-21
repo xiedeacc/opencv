@@ -47,7 +47,7 @@ if(HAVE_MFX AND UNIX)
   endif()
 
 endif()
-
+message("MFX_INCLUDE_DIRS: ${MFX_INCLUDE_DIRS}, MFX_LIBRARIES: ${MFX_LIBRARIES}")
 if(HAVE_MFX)
   ocv_add_external_target(mediasdk "${MFX_INCLUDE_DIRS}" "${MFX_LIBRARIES}" "HAVE_MFX")
 endif()
