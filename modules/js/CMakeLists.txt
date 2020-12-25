@@ -38,15 +38,14 @@ ocv_add_module(js BINDINGS PRIVATE_REQUIRED opencv_js_bindings_generator)
 
 ocv_module_include_directories(${EMSCRIPTEN_INCLUDE_DIR})
 
-add_definitions("-std=c++11")
-
 set(deps ${OPENCV_MODULE_${the_module}_DEPS})
 list(REMOVE_ITEM deps opencv_js_bindings_generator)  # don't add dummy module
 link_libraries(${deps})
 
 set(bindings_cpp "${OPENCV_JS_BINDINGS_DIR}/gen/bindings.cpp")
 set_source_files_properties(${bindings_cpp} PROPERTIES GENERATED TRUE)
-
+set_source_files_properties(${bindings_cpp} PROPERTIES COMPILE_FLAGS -std=c++14)
+set_source_files_properties(${bindings_cpp} PROPERTIES COMPILE_DEFINITIONS "__has_feature")
 OCV_OPTION(BUILD_WASM_INTRIN_TESTS "Build WASM intrin tests" OFF )
 if(BUILD_WASM_INTRIN_TESTS)
   add_definitions(-DTEST_WASM_INTRIN)

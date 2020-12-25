@@ -13,7 +13,7 @@ FATAL: In-source builds are not allowed.
        You should create a separate directory for build files.
 ")
 endif()
-
+add_definitions(-w)
 
 include(cmake/OpenCVMinDepVersions.cmake)
 
